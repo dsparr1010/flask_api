@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+from marshmallow import ValidationError
 import os
 
 from .ma import ma
@@ -33,6 +34,9 @@ def create_tables():
     db.init_app(app)
     db.create_all()
 
+@app.errorhandler(ValidationError)
+def handle_marshmallow_validation(err):
+    return jsonify(err.messages), 400
 
 jwt = JWTManager(app)
 
